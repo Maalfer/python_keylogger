@@ -39,14 +39,14 @@ def on_key_event(e):
 # Cada palabra se guarda en el output.txt y se crea en caso de no existir.
 def guardar_palabra():
     if not os.path.exists("output.txt"):
-        # Si el archivo no existe, créalo
+        # Si el archivo no existe, se crea con permisos de escritura.
         with open("output.txt", "w"):
             pass
 
     with open("output.txt", "a") as file:
         file.write(palabra + "\n")
     print(f'Palabra registrada: {Fore.GREEN}{palabra}{Style.RESET_ALL}')
-    resetear_palabra()
+    resetear_palabra() # Llamamos a la función que se encarga de resetear la variable después de presionar espacio.
 
 # Función para que se vaya registrando en la variable cada palabra al presionar espacio.
 def resetear_palabra():
